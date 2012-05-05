@@ -1,4 +1,4 @@
-package com.phdhub.oauth;
+package com.phdhub.oauth.service;
 
 import java.io.IOException;
 import java.io.InputStream;

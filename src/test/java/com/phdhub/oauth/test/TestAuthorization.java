@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.phdhub.oauth.Authorization;
+import com.phdhub.oauth.service.Authorization;
 
 public class TestAuthorization {
 
