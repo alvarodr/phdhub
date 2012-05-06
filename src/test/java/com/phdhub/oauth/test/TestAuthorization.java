@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import java.lang.reflect.Array;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -60,47 +61,56 @@ public class TestAuthorization {
 		
 		ArrayList<Group> gr = publicGroups.getGroups();
 		for (Iterator<Group> iterator = gr.iterator(); iterator.hasNext();) {
-			Group group = (Group) iterator.next();
-			String members = mendeleyService.getResponseMendeley("http://api.mendeley.com/oapi/documents/groups/" + group.getId() + "/people");
-			People people = gson.fromJson(members, People.class);
-			
-			if (people.getAdmins()!=null && people.getAdmins().size()>0){
-				ArrayList<Users> users = people.getAdmins();
-				for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
-					Users users2 = (Users) iterator2.next();
-					URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
-					HttpURLConnection urlConnect = auth.getTokenOauth(url);
-					BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
-					String resp = bf.readLine();
-					System.out.println(resp);
-					urlConnect.disconnect();
+			Integer id = new Integer(0);
+			try{
+				Group group = (Group) iterator.next();
+				String members = mendeleyService.getResponseMendeley("http://api.mendeley.com/oapi/documents/groups/" + group.getId() + "/people");
+				People people = gson.fromJson(members, People.class);
+				
+				if (people.getAdmins()!=null && people.getAdmins().size()>0){
+					ArrayList<Users> users = people.getAdmins();
+					for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
+						Users users2 = (Users) iterator2.next();
+						id = users2.getUser_id();
+						URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
+						HttpURLConnection urlConnect = auth.getTokenOauth(url);
+						BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
+						String resp = bf.readLine();
+						System.out.println(resp);
+						urlConnect.disconnect();
+					}
 				}
-			}
-			
-			if (people.getMembers()!=null && people.getMembers().size()>0){
-				ArrayList<Users> users = people.getMembers();
-				for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
-					Users users2 = (Users) iterator2.next();
-					URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
-					HttpURLConnection urlConnect = auth.getTokenOauth(url);
-					BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
-					String resp = bf.readLine();
-					System.out.println(resp);
-					urlConnect.disconnect();
+				
+				if (people.getMembers()!=null && people.getMembers().size()>0){
+					ArrayList<Users> users = people.getMembers();
+					for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
+						Users users2 = (Users) iterator2.next();
+						id = users2.getUser_id();
+						URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
+						HttpURLConnection urlConnect = auth.getTokenOauth(url);
+						BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
+						String resp = bf.readLine();
+						System.out.println(resp);
+						urlConnect.disconnect();
+					}
 				}
-			}
-			
-			if (people.getFollowers()!=null && people.getFollowers().size()>0){
-				ArrayList<Users> users = people.getFollowers();
-				for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
-					Users users2 = (Users) iterator2.next();
-					URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
-					HttpURLConnection urlConnect = auth.getTokenOauth(url);
-					BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
-					String resp = bf.readLine();
-					System.out.println(resp);
-					urlConnect.disconnect();
-				}
+				
+				if (people.getFollowers()!=null && people.getFollowers().size()>0){
+					ArrayList<Users> users = people.getFollowers();
+					for (Iterator iterator2 = users.iterator(); iterator2.hasNext();) {
+						Users users2 = (Users) iterator2.next();
+						id = users2.getUser_id();
+						URL url = new URL("http://api.mendeley.com/oapi/profiles/info/" + users2.getUser_id() + "/");
+						HttpURLConnection urlConnect = auth.getTokenOauth(url);
+						BufferedReader bf = new BufferedReader(new InputStreamReader(urlConnect.getInputStream()));
+						String resp = bf.readLine();
+						System.out.println(resp);
+						urlConnect.disconnect();
+					}
+				}				
+			}catch (ConnectException e) {
+				// TODO: handle exception
+				System.out.println("ERROR al recuperar el usuario con ID : " + id);
 			}
 		}
 	}
