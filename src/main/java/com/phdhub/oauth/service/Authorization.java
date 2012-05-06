@@ -35,7 +35,7 @@ public class Authorization {
 	private static OAuthConsumer consumer = null;
 	private static OAuthProvider provider = null;
 	
-	public Authorization() throws IOException{
+	public Authorization() throws IOException, OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, FailingHttpStatusCodeException, OAuthCommunicationException{
 		
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream("phdhub.properties");
 		Properties p = new Properties(System.getProperties());
@@ -59,20 +59,14 @@ public class Authorization {
 				requestToken,
 				accessToken,
 				authorizeWebsite);
+		
+		provider.retrieveAccessToken(getCode(provider.retrieveRequestToken(OAuth.OUT_OF_BAND)));
 	}
 	
 	public HttpURLConnection getTokenOauth(URL url) throws FailingHttpStatusCodeException, OAuthMessageSignerException, OAuthExpectationFailedException, IOException, OAuthCommunicationException{
-		try{
-			provider.retrieveAccessToken(getCode(provider.retrieveRequestToken(OAuth.OUT_OF_BAND)));
-			HttpURLConnection request = (HttpURLConnection) url.openConnection();
-			consumer.sign(request);
-			return request;
-		}catch (OAuthNotAuthorizedException e) {
-			// TODO: handle exception
-			System.out.println("Error de autorizacion: ");
-			e.printStackTrace();
-			return null;
-		}
+		HttpURLConnection request = (HttpURLConnection) url.openConnection();
+		consumer.sign(request);
+		return request;
 	}
 	
 	
@@ -101,7 +95,7 @@ public class Authorization {
 		HtmlPage accept = acceptForm.getInputByValue("Accept").click();
 		
 		HtmlStrong strong = (HtmlStrong) accept.getPage().getElementsByTagName("strong").get(0);
-		
+		webClient.closeAllWindows();
 		return strong.asText();
 	}
 }
