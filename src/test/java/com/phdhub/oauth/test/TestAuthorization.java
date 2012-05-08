@@ -7,7 +7,11 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -16,6 +20,8 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +41,12 @@ public class TestAuthorization {
 	private Authorization auth;
 	
 	@Before
-	public void prepare() throws IOException, OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, FailingHttpStatusCodeException, OAuthCommunicationException{
+	public void prepare() throws IOException, OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, FailingHttpStatusCodeException, OAuthCommunicationException, GeneralSecurityException{
+
 		auth = new Authorization();
 	}
 	
-	@Test
+	//@Test
 	public void getProfile() throws FailingHttpStatusCodeException, OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, IOException, OAuthCommunicationException{
 		//Authorization oauth = new Authorization();
 		URL url = new URL("http://api.mendeley.com/oapi/profiles/info/16757/");
@@ -48,7 +55,7 @@ public class TestAuthorization {
 		Assert.assertNotNull(urlConnect.getInputStream());
 	}
 	
-	@Test
+	//@Test
 	public void publicMethodMendeley() throws IOException, FailingHttpStatusCodeException, OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException{
 		MendeleyService mendeleyService = new MendeleyServiceImpl();
 		String groups = mendeleyService.getResponseMendeley("http://api.mendeley.com/oapi/documents/groups/");
@@ -113,5 +120,14 @@ public class TestAuthorization {
 				System.out.println("ERROR al recuperar el usuario con ID : " + id);
 			}
 		}
+	}
+	
+	@Test
+	public void sendMessage() throws FailingHttpStatusCodeException, OAuthMessageSignerException, OAuthExpectationFailedException, IOException, OAuthCommunicationException{
+		URL uri = new URL("http://www.mendeley.com/mailbox/send/jorge-garrido/");
+		//HttpPost post = new HttpPost(uri);
+		HttpURLConnection urlConnect = auth.getTokenOauth(uri);
+		System.out.println(urlConnect.getResponseCode() + " " + urlConnect.getResponseMessage());
+		Assert.assertTrue(urlConnect.getResponseCode()==HttpURLConnection.HTTP_OK);
 	}
 }
