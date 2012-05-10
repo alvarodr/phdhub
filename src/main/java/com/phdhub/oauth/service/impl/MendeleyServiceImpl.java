@@ -1,4 +1,4 @@
-package com.phdhub.ouauth.service.impl;
+package com.phdhub.oauth.service.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;

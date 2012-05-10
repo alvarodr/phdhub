@@ -34,7 +34,7 @@ import com.phdhub.mendeley.bom.PublicGroupsQuery;
 import com.phdhub.mendeley.bom.Users;
 import com.phdhub.oauth.service.Authorization;
 import com.phdhub.oauth.service.MendeleyService;
-import com.phdhub.ouauth.service.impl.MendeleyServiceImpl;
+import com.phdhub.oauth.service.impl.MendeleyServiceImpl;
 
 public class TestAuthorization {
 
