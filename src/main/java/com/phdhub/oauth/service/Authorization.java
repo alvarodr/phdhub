@@ -41,8 +41,6 @@ public class Authorization {
 	private static OAuthConsumer consumer = null;
 	private static OAuthProvider provider = null;
 	
-	private static String cookie = "";
-	
 	public Authorization() throws IOException, OAuthMessageSignerException, OAuthNotAuthorizedException, OAuthExpectationFailedException, FailingHttpStatusCodeException, OAuthCommunicationException, GeneralSecurityException{
 		
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream("phdhub.properties");
@@ -72,23 +70,8 @@ public class Authorization {
 	}
 	
 	public HttpURLConnection getTokenOauth(URL url) throws FailingHttpStatusCodeException, OAuthMessageSignerException, OAuthExpectationFailedException, IOException, OAuthCommunicationException{
-		String data = URLEncoder.encode("message", "UTF-8") + "=" + URLEncoder.encode("Hola es una prueba", "UTF-8");
-		data += "&" + URLEncoder.encode("recipient", "UTF-8") + "=" + URLEncoder.encode("jorge-garrido", "UTF-8");
-		data += "&" + URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode("Prueba", "UTF-8");
 		HttpURLConnection request = (HttpURLConnection) url.openConnection();
-		request.setDoOutput(true);
-		request.setRequestMethod("POST");
-		request.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-		/*request.setRequestProperty("Content-Length", "1024");
-		request.setRequestProperty("Referer", "http://www.mendeley.com/profiles/jorge-garrido/");
-		request.setRequestProperty("Cookie", cookie);*/
 		consumer.sign(request);
-		OutputStreamWriter writer = new OutputStreamWriter(request.getOutputStream());
-		System.out.println(data);
-		writer.write(data);
-		writer.flush();
-		//writer.close();
-		//consumer.sign(request);
 		return request;
 	}
 	
@@ -119,8 +102,7 @@ public class Authorization {
 		
 		HtmlStrong strong = (HtmlStrong) accept.getPage().getElementsByTagName("strong").get(0);
 		webClient.closeAllWindows();
-		Set<Cookie> cookies = webClient.getCookieManager().getCookies();
-		cookie = cookies.toString().substring(1, cookies.toString().length()-1);
+		
 		return strong.asText();
 	}
 }
